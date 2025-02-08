@@ -24,6 +24,7 @@ export const authOptions: NextAuthOptions = {
         if (!credentials?.email || !credentials?.password) {
           throw new Error("Email and password are required");
         }
+        console.log("first")
         try {
           await connectDB();
           const user = await User.findOne({ email: credentials.email }).select(
@@ -38,6 +39,8 @@ export const authOptions: NextAuthOptions = {
             credentials.password,
             user.password
           );
+          console.log(credentials.password)
+          console.log(user.password)
 
           if (!isPasswordMatched) {
             throw new Error("Password is incorrect 😥");

@@ -35,7 +35,7 @@ export default function Login() {
     event.preventDefault()
     setIsLoading(true)
 
-    
+
     try {
       const formData = new FormData(event.currentTarget)
       const res = await signIn("credentials", {
@@ -43,7 +43,7 @@ export default function Login() {
         password: formData.get("password"),
         redirect: false,
       })
-
+      console.log("first")
       if (res?.error) {
         throw new Error(res.error)
       }

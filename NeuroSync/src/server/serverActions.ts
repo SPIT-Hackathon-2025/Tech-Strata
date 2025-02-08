@@ -7,10 +7,7 @@ interface CreateUserResponse {
   }
   
   export const createUser = async (
-    fullName: {
-      firstName: string;
-      lastName: string;
-    },
+    
     username: string,
     email: string,
     password: string
@@ -37,7 +34,6 @@ interface CreateUserResponse {
       }
   
       const newUser = new User({
-        fullName: fullName,
         username: username,
         email: email,
         password: password,

@@ -9,7 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
 import showToast from "@/components/showToast/showToast" // Updated import path
 import { useSession } from "next-auth/react"
-
+import axios from "axios"
 export default function Register() {
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(false)
@@ -35,25 +35,20 @@ export default function Register() {
     setIsLoading(true)
 
     const formData = new FormData(event.currentTarget)
-    
+
     try {
-      const res = await fetch("/api/auth/register", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          username: formData.get("username"),
-          email: formData.get("email"),
-          password: formData.get("password"),
-        }),
+      const res = await axios.post("/api/users/signUp", {
+        username: formData.get("username") as string,
+        password: formData.get("password") as string,
+        email: formData.get("email") as string
       })
-      console.log(res.statusText)
-      if (!res.ok) {
+      console.log("first")
+      console.log(res)
+      if (res.data.status != 200) {
         showToast("Please enter a valid email address.", "error");
-        throw new Error(await res.text())
+        throw new Error(await res.data.message)
       }
-      router.replace(`/verify/${formData.get("email")}`)
+      router.replace("/auth/login")
     } catch (error: any) {
       showToast("Please enter a valid email address.", "error");
     } finally {
