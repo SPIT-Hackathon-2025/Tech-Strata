@@ -4,10 +4,6 @@ import bcrypt from "bcryptjs";
 export interface IUser extends Document {
   username: string;
   email: string;
-  fullName: {
-    firstName: string;
-    lastName: string;
-  };
   password: string;
   roles: string[];
   rooms: mongoose.Types.ObjectId[];
@@ -15,16 +11,7 @@ export interface IUser extends Document {
   updatedAt: Date;
 }
 
-const fullNameSchema = new Schema({
-  firstName: {
-    type: String,
-    default: "",
-  },
-  lastName: {
-    type: String,
-    default: "",
-  },
-});
+
 
 const userSchema = new Schema<IUser>(
   {
@@ -39,7 +26,6 @@ const userSchema = new Schema<IUser>(
       unique: true,
       match: /.+\@.+\..+/,
     },
-    fullName: fullNameSchema,
     password: {
       type: String,
       required: true,
