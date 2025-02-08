@@ -4,8 +4,8 @@ import { createUser } from "@/server/serverActions";
 export async function POST(request: NextRequest) {
   try {
     const reqBody = await request.json();
-    const { fullName, username, email, password } = reqBody;
-    const response = await createUser(fullName, username, email, password);
+    const {  username, email, password } = reqBody;
+    const response = await createUser( username, email, password);
     console.log(response);
     return NextResponse.json({
       status: response.status,
