@@ -1,10 +1,16 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { redirect, useRouter } from "next/navigation"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card"
+import { useState } from "react";
+import { redirect, useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+} from "@/components/ui/card";
 import {
   Dialog,
   DialogContent,
@@ -13,37 +19,38 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog"
-import { useSession } from "next-auth/react"
-import { signOut } from 'next-auth/react'
-
+} from "@/components/ui/dialog";
+import { useSession } from "next-auth/react";
+import { signOut } from "next-auth/react";
 
 export default function Home() {
-  const [createRoomId, setCreateRoomId] = useState("")
-  const [joinRoomId, setJoinRoomId] = useState("")
-  const [joinRoomPassword, setJoinRoomPassword] = useState("")
-  const router = useRouter()
-  const { data: session, status } = useSession()
+  const [createRoomId, setCreateRoomId] = useState("");
+  const [joinRoomId, setJoinRoomId] = useState("");
+  const [joinRoomPassword, setJoinRoomPassword] = useState("");
+  const router = useRouter();
+  const { data: session, status } = useSession();
   // console.log(session?.user.username)
   if (status === "loading") {
-    return <div>Loading...</div>
+    return <div>Loading...</div>;
   }
 
   if (!session) {
-    redirect("/auth/login")
+    redirect("/auth/login");
   }
+
+  const username = session?.user.username;
 
   const handleCreateRoom = () => {
     // Here you would typically make an API call to create the room
     // For now, we'll just redirect to the code editor page
-    router.push(`/code?roomId=${createRoomId}`)
-  }
+    router.push(`/code/${username}/${createRoomId}`);
+  };
 
   const handleJoinRoom = () => {
     // Here you would typically make an API call to join the room
     // For now, we'll just redirect to the code editor page
-    router.push(`/code?roomId=${joinRoomId}`)
-  }
+    router.push(`/code${username}/${joinRoomId}`);
+  };
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -51,7 +58,14 @@ export default function Home() {
       <nav className="bg-primary text-primary-foreground p-4">
         <div className="container mx-auto flex justify-between items-center">
           <h1 className="text-2xl font-bold">CodeCollab</h1>
-          <Button variant="secondary" onClick={()=>{signOut()}}>Logout</Button>
+          <Button
+            variant="secondary"
+            onClick={() => {
+              signOut();
+            }}
+          >
+            Logout
+          </Button>
         </div>
       </nav>
 
@@ -59,7 +73,9 @@ export default function Home() {
       <main className="flex-grow container mx-auto px-4 py-8">
         <section className="text-center mb-12">
           <h2 className="text-4xl font-bold mb-4">Welcome to CodeCollab</h2>
-          <p className="text-xl text-muted-foreground">Start collaborating on code in real-time</p>
+          <p className="text-xl text-muted-foreground">
+            Start collaborating on code in real-time
+          </p>
         </section>
 
         {/* Create Room Card */}
@@ -76,7 +92,9 @@ export default function Home() {
               <DialogContent>
                 <DialogHeader>
                   <DialogTitle>Create a New Room</DialogTitle>
-                  <DialogDescription>Enter a room ID to create a new coding session.</DialogDescription>
+                  <DialogDescription>
+                    Enter a room ID to create a new coding session.
+                  </DialogDescription>
                 </DialogHeader>
                 <Input
                   value={createRoomId}
@@ -101,7 +119,9 @@ export default function Home() {
           <DialogContent>
             <DialogHeader>
               <DialogTitle>Join a Meeting</DialogTitle>
-              <DialogDescription>Enter the room ID and password to join an existing session.</DialogDescription>
+              <DialogDescription>
+                Enter the room ID and password to join an existing session.
+              </DialogDescription>
             </DialogHeader>
             <Input
               value={joinRoomId}
@@ -122,6 +142,5 @@ export default function Home() {
         </Dialog>
       </div>
     </div>
-  )
+  );
 }
-
