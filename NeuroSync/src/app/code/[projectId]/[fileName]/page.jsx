@@ -129,22 +129,16 @@ const CodeEditor = () => {
 
   async function fetchAICompletion(prompt) {
     try {
-      const response = await axios.post(
-        "https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateText",
-        {
-          contents: [{ parts: [{ text: prompt }] }],
-        },
-        {
-          headers: { "Content-Type": "application/json" },
-          params: { key: "YOUR_GOOGLE_API_KEY" },
-        }
-      );
-      return response.data.candidates?.[0]?.content || "";
+      const response = await fetch("/api/gemini", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ prompt }),
+      });
+
+      const data = await response.json();
+      return data?.candidates?.[0]?.content || "";
     } catch (error) {
-      console.error(
-        "AI Completion Error:",
-        error.response?.data || error.message
-      );
+      console.error("AI Completion Error:", error);
       return "";
     }
   }
@@ -165,44 +159,59 @@ const CodeEditor = () => {
   }
 
   async function pushChanges() {
-    const code = editorRef.current.getValue(); // Added missing code variable
+    if (!editorRef.current) return;
+
+    const fileName = "myfile.js"; // Replace with dynamic file name if needed
+    const code = editorRef.current.getValue(); // Get code from the editor
+
     try {
-      await axios.post(`${MONGO_API_URL}/save`, { code });
-      setLastSavedCode(code);
-      setDiffs([]);
-      alert("Changes pushed successfully!");
+      const response = await axios.post("/api/users/pushCode", {
+        fileName,
+        content: code,
+      });
+
+      if (response.status === 200) {
+        setLastSavedCode(code); // Store last saved code state
+        setDiffs([]); // Clear diffs after successful save
+        alert("Changes pushed successfully!");
+      } else {
+        throw new Error("Failed to save");
+      }
     } catch (error) {
       console.error("Failed to push changes:", error);
-      alert("Failed to push changes.");
+      alert("Error saving changes. Please try again.");
     }
   }
 
   function registerAIAutocomplete(monaco) {
-    monaco.languages.registerCompletionItemProvider("javascript", {
-      provideCompletionItems: async (model, position) => {
-        const textBeforeCursor = model.getValueInRange({
-          startLineNumber: 1,
-          startColumn: 1,
-          endLineNumber: position.lineNumber,
-          endColumn: position.column,
-        });
+    monaco.languages.registerCompletionItemProvider(
+      { language },
+      {
+        provideCompletionItems: async (model, position) => {
+          const textBeforeCursor = model.getValueInRange({
+            startLineNumber: 1,
+            startColumn: 1,
+            endLineNumber: position.lineNumber,
+            endColumn: position.column,
+          });
 
-        const aiSuggestion = await fetchAICompletion(textBeforeCursor);
+          const aiSuggestion = await fetchAICompletion(textBeforeCursor);
 
-        if (!aiSuggestion) return { suggestions: [] };
+          if (!aiSuggestion) return { suggestions: [] };
 
-        return {
-          suggestions: [
-            {
-              label: "AI Suggestion",
-              kind: monaco.languages.CompletionItemKind.Snippet,
-              insertText: aiSuggestion,
-              detail: "Suggested by Gemini AI",
-            },
-          ],
-        };
-      },
-    });
+          return {
+            suggestions: [
+              {
+                label: "AI Suggestion",
+                kind: monaco.languages.CompletionItemKind.Snippet,
+                insertText: aiSuggestion,
+                detail: "Suggested by Gemini AI",
+              },
+            ],
+          };
+        },
+      }
+    );
   }
 
   return (
@@ -214,14 +223,16 @@ const CodeEditor = () => {
         >
           <Save size={16} /> Detect Changes
         </button>
-        <button
-          onClick={pushChanges}
-          className="bg-blue-500 text-white px-4 py-2 rounded-lg shadow-md"
-        >
-          <Upload size={16} /> Push to MongoDB
-        </button>
+        {diffs && diffs.length > 0 && (
+          <button
+            onClick={pushChanges}
+            className="bg-blue-500 text-white px-4 py-2 rounded-lg shadow-md z-40"
+          >
+            <Upload size={16} /> Push to MongoDB
+          </button>
+        )}
       </div>
-      <div className="absolute top-4 right-4 z-10">
+      <div className="absolute top-20 right-4 z-10">
         <button
           onClick={executeCode}
           className="bg-green-500 text-white px-4 py-2 rounded-lg shadow-md"
