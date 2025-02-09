@@ -17,6 +17,9 @@
     "bcryptjs": "^2.4.3",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "diff-match-patch": "^1.0.5",
+    "framer-motion": "^12.4.1",
+    "idb": "^8.0.2",
     "lucide-react": "^0.475.0",
     "mongoose": "^8.10.0",
     "next": "latest",
@@ -26,8 +29,9 @@
     "react-toastify": "^11.0.3",
     "tailwind-merge": "^3.0.1",
     "tailwindcss-animate": "^1.0.7",
-    "y-monaco": "^1.0.0",
+    "y-monaco": "^0.1.6",
     "y-webrtc": "^10.0.0",
+    "y-websocket": "^2.1.0",
     "yjs": "^13.6.23"
   },
   "devDependencies": {

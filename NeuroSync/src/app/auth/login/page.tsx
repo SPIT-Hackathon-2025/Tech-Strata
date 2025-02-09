@@ -1,59 +1,57 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import { signIn, useSession } from "next-auth/react"
-import { useRouter, useSearchParams } from "next/navigation"
-import Link from "next/link"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Label } from "@/components/ui/label"
-import showToast from "@/components/showToast/showToast"
+import { useState, useEffect } from "react";
+import { signIn, useSession } from "next-auth/react";
+import { useRouter, useSearchParams } from "next/navigation";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
+import showToast from "@/components/showToast/showToast";
 
 export default function Login() {
-  const router = useRouter()
-  const searchParams = useSearchParams()
-  const [isLoading, setIsLoading] = useState(false)
+  const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false);
 
-  const { data: session, status } = useSession()
+  const { data: session, status } = useSession();
 
   useEffect(() => {
     if (status === "authenticated") {
-      router.push("/dashboard")
+      router.push("/dashboard");
     }
-  }, [status, router])
+  }, [status, router]);
 
   if (status === "loading") {
-    return <div>Loading...</div>
+    return <div>Loading...</div>;
   }
 
   if (status === "authenticated") {
-    return null
+    return null;
   }
 
   async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault()
-    setIsLoading(true)
-
+    event.preventDefault();
+    setIsLoading(true);
 
     try {
-      const formData = new FormData(event.currentTarget)
+      const formData = new FormData(event.currentTarget);
       const res = await signIn("credentials", {
         email: formData.get("email"),
         password: formData.get("password"),
         redirect: false,
-      })
-      console.log("first")
+      });
+      console.log("first");
       if (res?.error) {
-        throw new Error(res.error)
+        throw new Error(res.error);
       }
 
-      router.replace("/dashboard")
-      router.refresh()
+      router.replace("/dashboard");
+      router.refresh();
     } catch (error: any) {
       showToast("Please enter a valid email address.", "error");
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
   }
 
@@ -93,12 +91,15 @@ export default function Login() {
           </form>
           <div className="mt-4 text-center text-sm">
             Don&apos;t have an account?{" "}
-            <Link href="/auth/register" className="text-primary hover:underline">
+            <Link
+              href="/auth/register"
+              className="text-primary hover:underline"
+            >
               Create account
             </Link>
           </div>
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }
