@@ -1,5 +1,11 @@
 # NeuroSync
 
+
+<p align="center">
+    <img src="/NeuroSync/public/dash1.jpg" alt="DashBoard" style="width: 40%;">
+    <img src="/NeuroSync/public/dash2.jpg" alt="Dash Board" style="width: 40%;">
+</p>
+
 Real-time collaborative development environment with seamless integration of version control, multi-cursor and more.
 Join today to experience a platform that is redefining teamwork and encouraging organizational-friendly programming paradigms.
 
